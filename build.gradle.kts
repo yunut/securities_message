@@ -25,7 +25,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
@@ -36,6 +35,14 @@ dependencies {
 
 	// telegram bot
 	implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+
+	// retrofit2 + xml
+	implementation("com.squareup.retrofit2:retrofit:2.9.0")
+	implementation(
+		"com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0",
+	)
+	implementation("com.squareup.okhttp3:logging-interceptor")
+	implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
 
 	// for json(need for kotlin data class parsing)
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

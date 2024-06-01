@@ -1,1 +1,8 @@
-spring.application.name=securities_message
+spring:
+  application:
+    name: securities_message
+
+http:
+  securitiesApi:
+    scheme: http
+    host: localhost
