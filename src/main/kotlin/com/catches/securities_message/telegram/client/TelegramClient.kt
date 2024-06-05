@@ -1,17 +1,21 @@
 package com.catches.securities_message.telegram.client
 
+import com.catches.securities_message.retrofit.api.SecuritiesApiInterface
 import com.catches.securities_message.telegram.config.TelegramConfig
 import com.github.kotlintelegrambot.Bot
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.ParseMode
 import jakarta.annotation.PostConstruct
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
 class TelegramClient(
-    private val telegramConfig: TelegramConfig
+    private val telegramConfig: TelegramConfig,
+    @Qualifier("securitiesApiRetrofit") private val securitiesApiInterface: SecuritiesApiInterface
 ) {
     private lateinit var telegramBot: Bot
 
@@ -21,22 +25,40 @@ class TelegramClient(
             token = telegramConfig.getTelegramToken()
             dispatch {
                 command("bond") {
+                    val args = args.joinToString()
+                    val msg = if(args.isNullOrEmpty()) {
+                        // TODO 채권 정보가 없을 경우 전체 채권 리스트 가져오기
+                        ""
+                        } else {
+                            // 채권 정보가 있을 경우 해당 채권 정보 가져오기
+                            val data = securitiesApiInterface.getBondDetail(args).execute()
 
-                    //TODO 수익률 좋은 채권 리스트 가져오기
+                            if(data.isSuccessful && data.body()?.data != null) {
+                                """
+                                *채권명:*        ${data.body()?.data?.bondName}
+                                *표면 이자율:*     ${data.body()?.data?.surfaceInterestRate}
+                                *발행인:*        ${data.body()?.data?.issuerName}
+                                *발행일자:*       ${data.body()?.data?.issueDate}
+                                *만기일자:*       ${data.body()?.data?.expiredDate}
+                                *금리변동 구분:*   ${data.body()?.data?.interestChange}
+                                *이자 유형:*      ${data.body()?.data?.interestType}
+                                *종가:*          ${data.body()?.data?.price}
+                                *종가 기준일:*     ${data.body()?.data?.priceDate}
+                                """
+                            } else {
+                                """
+                                    채권 정보를 가져오는 도중 문제가 발생하였습니다.
+                                """
+                            }
+                        }.trimIndent()
 
-
-                    val result = bot.sendMessage(chatId = ChatId.fromId(message.chat.id), text = "Help message")
-                    // 성공하였을 시 처리
+                    val result = bot.sendMessage(chatId = ChatId.fromId(message.chat.id), parseMode= ParseMode.MARKDOWN, text = msg)
+                    //TODO 메시지 발송 결과에 따라 핸들링
                     result.fold({
                         // do something here with the response
                     }, {
                         // do something with the error
                     })
-                }
-                command("bond_info") {
-                    val args = args.joinToString()
-
-                    //TODO 채권 상세 정보 가져오기
                 }
 
                 command("my_bond") {

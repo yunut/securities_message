@@ -1,7 +1,7 @@
 package com.catches.securities_message.retrofit.config
 
 import com.catches.securities_message.properties.HttpProperty
-import com.catches.securities_message.retrofit.config.api.SecuritiesApiInterface
+import com.catches.securities_message.retrofit.api.SecuritiesApiInterface
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.ConnectionPool
