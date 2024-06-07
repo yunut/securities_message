@@ -3,15 +3,29 @@ package com.catches.securities_message.retrofit.api.response
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BondResponseBody(
+data class BondResponseBody<T>(
     val meta: MetaBody,
-    val data: BondDetailData? = null,
+    val data: T? = null,
 )
 
 @Serializable
 data class MetaBody(
     val code: Int,
     val message: String? = "",
+)
+
+@Serializable
+data class BondListData(
+    val grade: String,
+    val bondList: List<BondListResponseBody>,
+)
+
+@Serializable
+data class BondListResponseBody(
+    val name: String,
+    val surfaceInterestRate: Double,
+    val expiredDate: String,
+    val grade: String,
 )
 
 @Serializable

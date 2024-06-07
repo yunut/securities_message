@@ -26,9 +26,43 @@ class TelegramClient(
             dispatch {
                 command("bond") {
                     val args = args.joinToString()
-                    val msg = if(args.isNullOrEmpty()) {
-                        // TODO 채권 정보가 없을 경우 전체 채권 리스트 가져오기
-                        ""
+                    val msg =
+                        if(args.isNullOrEmpty()) {
+                            val data = securitiesApiInterface.getBondList().execute()
+
+                            if(data.isSuccessful && data.body()?.data != null) {
+                                val sb = StringBuffer()
+
+                                sb.append(
+                                    """
+                                        *등급별 표면 수익률이 높은 채권 리스트*
+                                        각 등급별 3개씩 제공합니다.
+                                        
+                                        채권명 / 표면 수익률 / 만기일자 / 등급
+                                    """.trimIndent()
+                                ).append("\n\n")
+
+                                data.body()!!.data?.forEach {
+                                    sb.append(
+                                        """
+                                            *${it.grade}*
+                                        """.trimIndent()
+                                    ).append("\n")
+                                    it.bondList.forEach {
+                                        sb.append(
+                                            """
+                                                ${it.name}  ${it.surfaceInterestRate}%  ${it.expiredDate}  ${it.grade}
+                                            """.trimIndent()
+                                        ).append("\n")
+                                    }
+                                    sb.append("\n")
+                                }
+                                sb.toString()
+                            } else {
+                                """
+                                    채권 정보를 가져오는 도중 문제가 발생하였습니다.
+                                """
+                            }
                         } else {
                             // 채권 정보가 있을 경우 해당 채권 정보 가져오기
                             val data = securitiesApiInterface.getBondDetail(args).execute()
