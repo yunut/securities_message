@@ -7,7 +7,9 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.InlineKeyboardMarkup
 import com.github.kotlintelegrambot.entities.ParseMode
+import com.github.kotlintelegrambot.entities.keyboard.InlineKeyboardButton
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
@@ -65,34 +67,41 @@ class TelegramClient(
                             }
                         } else {
                             // 채권 정보가 있을 경우 해당 채권 정보 가져오기
-                            val data = securitiesApiInterface.getBondDetail(args).execute()
+                            val data = securitiesApiInterface.searchBondList(args).execute()
 
-                            if(data.isSuccessful && data.body()?.data != null) {
-                                """
-                                *채권명:*        ${data.body()?.data?.bondName}
-                                *표면 이자율:*     ${data.body()?.data?.surfaceInterestRate}
-                                *발행인:*        ${data.body()?.data?.issuerName}
-                                *발행일자:*       ${data.body()?.data?.issueDate}
-                                *만기일자:*       ${data.body()?.data?.expiredDate}
-                                *금리변동 구분:*   ${data.body()?.data?.interestChange}
-                                *이자 유형:*      ${data.body()?.data?.interestType}
-                                *종가:*          ${data.body()?.data?.price}
-                                *종가 기준일:*     ${data.body()?.data?.priceDate}
-                                """
-                            } else {
-                                """
-                                    채권 정보를 가져오는 도중 문제가 발생하였습니다.
-                                """
-                            }
-                        }.trimIndent()
+                            val inlineKeyboardMarkup = InlineKeyboardMarkup.create(
+                                data.body()?.data?.map {
+                                    InlineKeyboardButton.CallbackData(
+                                        text = it.bondName,
+                                        callbackData =
+                                        """
+                                        *채권명:*        ${it.bondName}
+                                        *표면 이자율:*     ${it.surfaceInterestRate}
+                                        *발행인:*        ${it.issuerName}
+                                        *발행일자:*       ${it.issueDate}
+                                        *만기일자:*       ${it.expiredDate}
+                                        *금리변동 구분:*   ${it.interestChange}
+                                        *이자 유형:*      ${it.interestType}
+                                        *종가:*          ${it.price}
+                                        *종가 기준일:*     ${it.priceDate}
+                                        """
+                                    )
+                                } ?: emptyList() // TODO 체크 필요
+                            )
 
-                    val result = bot.sendMessage(chatId = ChatId.fromId(message.chat.id), parseMode= ParseMode.MARKDOWN, text = msg)
-                    //TODO 메시지 발송 결과에 따라 핸들링
-                    result.fold({
-                        // do something here with the response
-                    }, {
-                        // do something with the error
-                    })
+                            val result = bot.sendMessage(
+                                chatId = ChatId.fromId(message.chat.id),
+                                parseMode = ParseMode.MARKDOWN,
+                                text = "정보를 확인하고 싶은 채권 선택",
+                                replyMarkup = inlineKeyboardMarkup
+                            )
+
+                            result.fold({
+                                // do something here with the response
+                            }, {
+                                // do something with the error
+                            })
+                        }
                 }
 
                 command("my_bond") {

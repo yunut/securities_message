@@ -20,6 +20,12 @@ interface SecuritiesApiInterface {
         @Query("name") bondName: String,
     ): Call<BondResponseBody<BondDetailData>>
 
+    // TODO 채권 이름으로 리스트 검색하는 API
+    @GET("/bond/search")
+    fun searchBondList(
+        @Query("name") bondName: String,
+    ): Call<BondResponseBody<List<BondDetailData>>>
+
     // TODO 사용자가 등록한 채권 리스트 가져오는 API
 
     // TODO 사용자 자신의 채권 정보를 등록하는 API
