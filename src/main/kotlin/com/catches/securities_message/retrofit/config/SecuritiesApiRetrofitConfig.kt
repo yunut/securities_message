@@ -46,7 +46,7 @@ class SecuritiesApiRetrofitConfig(
                             ),
                 ).build()
         return Retrofit.Builder().baseUrl(
-            HttpUrl.Builder().scheme(httpProperty.securitiesApi.scheme).host(httpProperty.securitiesApi.host).build(),
+            HttpUrl.Builder().scheme(httpProperty.securitiesApi.scheme).host(httpProperty.securitiesApi.host).port(8080).build(),
         ).client(client).addConverterFactory(
             Json {
                 isLenient = true

@@ -30,6 +30,7 @@ data class BondListResponseBody(
 
 @Serializable
 data class BondDetailData(
+    val bondId: String,
     val bondName: String,
     val surfaceInterestRate: Double,
     val issuerName: String,
