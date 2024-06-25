@@ -7,3 +7,8 @@ data class UserBondCreateRequest(
     val userId: String,
     val bondId: String,
 )
+
+@Serializable
+data class UserCreateRequest(
+    val id: String,
+)
