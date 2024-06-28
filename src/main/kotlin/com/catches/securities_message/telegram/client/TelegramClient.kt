@@ -72,7 +72,7 @@ class TelegramClient(
                                 """
                             }
 
-                        telegramBot.sendMessage(ChatId.fromId(message.chat.id), messageBody)
+                        telegramBot.sendMessage(ChatId.fromId(message.chat.id), parseMode= ParseMode.MARKDOWN, text = messageBody)
 
                     } else {
                         // 채권 정보가 있을 경우 해당 채권 정보 가져오기
