@@ -83,7 +83,7 @@ class TelegramClient(
                                 listOf(
                                     InlineKeyboardButton.Url(
                                         text = it.bondName,
-                                        url = "https://www.google.com", // TODO 버튼 클릭 후 URL 처리 필요
+                                        url = "https://securities-frontend.vercel.app/bond", // TODO 버튼 클릭 후 URL 처리 필요
                                     )
                                 )
                             } ?: emptyList() // TODO 체크 필요
@@ -111,7 +111,7 @@ class TelegramClient(
                                     listOf(
                                         InlineKeyboardButton.Url(
                                             text = it.bondName,
-                                            url = "https://www.google.com", // TODO 버튼 클릭 후 URL 처리 필요
+                                            url = "https://securities-frontend.vercel.app/bond", // TODO 버튼 클릭 후 URL 처리 필요
                                         )
                                     )
                                 } ?: emptyList()
